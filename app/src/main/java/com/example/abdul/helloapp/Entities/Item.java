@@ -3,14 +3,27 @@ package com.example.abdul.helloapp.Entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Item implements Parcelable {
+import com.google.gson.annotations.SerializedName;
 
+public class Item implements Parcelable {
+    @SerializedName("title")
+    public String title;
+    @SerializedName("description")
+    public String description;
+    @SerializedName("image")
+    public String image;
 
     protected Item(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        image = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(image);
     }
 
     @Override
