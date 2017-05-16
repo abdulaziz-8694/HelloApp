@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,7 @@ import com.example.abdul.helloapp.Utils.GsonRequest;
  * TODO: Handle redirects for images
  */
 public class ItemListActivity extends AppCompatActivity implements Response.Listener<Item[]>,
-        Response.ErrorListener{
+        Response.ErrorListener {
     public static final String ITEM_URL = "https://gist.githubusercontent.com/maclir/f715d78b49c3b4b3b77f/raw/8854ab2fe4cbe2a5919cea97d71b714ae5a4838d/items.json";
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
@@ -102,11 +103,18 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if(holder instanceof ItemViewHolder){
-                Item item = mItems[position];
-                ((ItemViewHolder)holder).mTitle.setText(item.title);
-                ((ItemViewHolder)holder).mDescription.setText(item.description);
-                ((ItemViewHolder)holder).mImage.setImageUrl(item.image,
+                mItems[position].image = mItems[position].image.replace("http:", "https:");
+                final Item mSelectedItem = mItems[position];
+                ((ItemViewHolder)holder).mTitle.setText(mSelectedItem.title);
+                ((ItemViewHolder)holder).mDescription.setText(mSelectedItem.description);
+                ((ItemViewHolder)holder).mImage.setImageUrl(mSelectedItem.image,
                         mImageLoader);
+                ((ItemViewHolder)holder).mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItemDetails(mSelectedItem);
+                    }
+                });
             }
         }
 
@@ -119,13 +127,19 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
             NetworkImageView mImage;
             TextView mTitle;
             TextView mDescription;
+            View mView;
 
             ItemViewHolder(View itemView) {
                 super(itemView);
+                mView = itemView.findViewById(R.id.item_view);
                 mImage = (NetworkImageView) itemView.findViewById(R.id.item_image);
                 mTitle = (TextView) itemView.findViewById(R.id.item_title);
                 mDescription = (TextView) itemView.findViewById(R.id.item_description);
             }
         }
+    }
+
+    private void showItemDetails(Item mSelectedItem) {
+        Log.d("ITEM", mSelectedItem.title);
     }
 }
