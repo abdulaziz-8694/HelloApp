@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,11 +30,13 @@ import com.example.abdul.helloapp.Utils.GsonRequest;
  * shows the mItems as a list.
  */
 public class ItemListActivity extends AppCompatActivity implements Response.Listener<Item[]>,
-        Response.ErrorListener {
+        Response.ErrorListener, View.OnClickListener {
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
     private Context mContext;
     private ProgressBar mProgressBar;
+    private Button mRetryButton;
+    private View mInternetContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +48,9 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
     }
 
     private void getItems() {
-        mProgressBar.setVisibility(View.VISIBLE);
+        mInternetContainer.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
         GsonRequest<Item[]> gsonRequest = new GsonRequest<>(Request.Method.GET, Constants.ITEM_URL,
                 Item[].class, this, this);
         NetworkManager.getInstance(mContext).addToRequestQueue(gsonRequest);
@@ -56,6 +61,9 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
     }
 
     private void setupUIControls() {
+        mInternetContainer = findViewById(R.id.no_internet_container);
+        mRetryButton = (Button) findViewById(R.id.btn_retry);
+        mRetryButton.setOnClickListener(this);
         mProgressBar = (ProgressBar) findViewById(R.id.progress);
         mRecyclerView = (RecyclerView) findViewById(R.id.list_item);
         mAdapter = new ItemAdapter(mContext);
@@ -75,8 +83,17 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
     @Override
     public void onErrorResponse(VolleyError error) {
         mProgressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
+        mInternetContainer.setVisibility(View.VISIBLE);
         error.printStackTrace();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.btn_retry){
+            getItems();
+        }
+
     }
 
     private class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -106,7 +123,8 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
                 mItems[position].image = mItems[position].image.replace("http:", "https:");
                 final Item mSelectedItem = mItems[position];
                 ((ItemViewHolder)holder).mTitle.setText(mSelectedItem.title);
-                ((ItemViewHolder)holder).mDescription.setText(mSelectedItem.description);
+                ((ItemViewHolder)holder).mDescription.setText(Html.fromHtml(getResources()
+                        .getString(R.string.summary, mSelectedItem.description)));
                 ((ItemViewHolder)holder).mImage.setImageUrl(mSelectedItem.image,
                         mImageLoader);
                 ((ItemViewHolder)holder).mView.setOnClickListener(new View.OnClickListener() {
