@@ -120,6 +120,7 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if(holder instanceof ItemViewHolder){
+                //simple hack to prevent failure on redirect from http to https
                 mItems[position].image = mItems[position].image.replace("http:", "https:");
                 final Item mSelectedItem = mItems[position];
                 ((ItemViewHolder)holder).mTitle.setText(mSelectedItem.title);

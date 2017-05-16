@@ -10,7 +10,11 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 
-
+/**
+ * Custom volley request that parses the json response
+ * into a model object defined by generic type using Gson library
+ * @param <T> type of the model
+ */
 public class GsonRequest<T> extends Request<T> {
     private Class<T> mClass;
     private Response.Listener<T> mListener;
