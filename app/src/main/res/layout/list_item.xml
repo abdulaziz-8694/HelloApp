@@ -18,6 +18,7 @@
             android:id="@+id/item_image"
             android:layout_width="92dp"
             android:layout_height="92dp"
+            android:layout_gravity="center"
             android:padding="5dp"/>
 
         <LinearLayout

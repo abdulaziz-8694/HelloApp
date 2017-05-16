@@ -1,6 +1,7 @@
 package com.example.abdul.helloapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.abdul.helloapp.Entities.Item;
 import com.example.abdul.helloapp.Entities.NetworkManager;
+import com.example.abdul.helloapp.Utils.Constants;
 import com.example.abdul.helloapp.Utils.GsonRequest;
 
 /**
@@ -27,7 +29,6 @@ import com.example.abdul.helloapp.Utils.GsonRequest;
  */
 public class ItemListActivity extends AppCompatActivity implements Response.Listener<Item[]>,
         Response.ErrorListener {
-    public static final String ITEM_URL = "https://gist.githubusercontent.com/maclir/f715d78b49c3b4b3b77f/raw/8854ab2fe4cbe2a5919cea97d71b714ae5a4838d/items.json";
     private RecyclerView mRecyclerView;
     private ItemAdapter mAdapter;
     private Context mContext;
@@ -45,7 +46,7 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
     private void getItems() {
         mProgressBar.setVisibility(View.VISIBLE);
         mRecyclerView.setVisibility(View.GONE);
-        GsonRequest<Item[]> gsonRequest = new GsonRequest<>(Request.Method.GET, ITEM_URL,
+        GsonRequest<Item[]> gsonRequest = new GsonRequest<>(Request.Method.GET, Constants.ITEM_URL,
                 Item[].class, this, this);
         NetworkManager.getInstance(mContext).addToRequestQueue(gsonRequest);
     }
@@ -140,5 +141,8 @@ public class ItemListActivity extends AppCompatActivity implements Response.List
 
     private void showItemDetails(Item mSelectedItem) {
         Log.d("ITEM", mSelectedItem.title);
+        Intent intent = new Intent(mContext, ItemDetails.class);
+        intent.putExtra(Constants.BUNDLE_ITEM, mSelectedItem);
+        startActivity(intent);
     }
 }
