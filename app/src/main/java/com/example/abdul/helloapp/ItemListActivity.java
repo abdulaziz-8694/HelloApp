@@ -24,7 +24,6 @@ import com.example.abdul.helloapp.Utils.GsonRequest;
 /**
  * Main Activity that fetches the data from the network once and
  * shows the mItems as a list.
- * TODO: Handle redirects for images
  */
 public class ItemListActivity extends AppCompatActivity implements Response.Listener<Item[]>,
         Response.ErrorListener {
