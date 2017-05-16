@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Model Class to map the json data.
+ * Implemented Parcelable to enable passing of
+ * object of this class through bundles
+ */
 public class Item implements Parcelable {
     @SerializedName("title")
     public String title;
